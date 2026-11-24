@@ -8,19 +8,30 @@ class Task:
         titol: str,
         assignatura: str,
         estat: str = "pendent",
+        data_limit: str | None = None,
     ) -> None:
         self.id = id
         self.titol = titol
         self.assignatura = assignatura
         self.estat = estat
+        self.data_limit = data_limit
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        dades: dict[str, object] = {
             "id": self.id,
             "titol": self.titol,
             "assignatura": self.assignatura,
             "estat": self.estat,
         }
+        if self.data_limit is not None:
+            dades["data_limit"] = self.data_limit
+        return dades
+
+    @staticmethod
+    def _normalitza_data_limit(valor: object) -> str | None:
+        if valor is None or valor == "":
+            return None
+        return str(valor)
 
     @classmethod
     def from_dict(cls, dades: dict[str, object]) -> "Task":
@@ -29,6 +40,7 @@ class Task:
             titol=str(dades["titol"]),
             assignatura=str(dades["assignatura"]),
             estat=str(dades.get("estat", "pendent")),
+            data_limit=cls._normalitza_data_limit(dades.get("data_limit")),
         )
 
     def to_json(self) -> str:

@@ -26,7 +26,7 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 
 ### Tasques d'Execució:
 
-- [ ] Tasca 2.1: Afegir el camp opcional `data_limit` al model `Task` de `src/models.py`, mantenint la compatibilitat amb tasques del JSON que no el tenen. (RF-05, RF-07)
+- [x] Tasca 2.1: Afegir el camp opcional `data_limit` al model `Task` de `src/models.py`, mantenint la compatibilitat amb tasques del JSON que no el tenen. (RF-05, RF-07)
 
 - [ ] Tasca 2.2: Afegir l'opció `--due` al comandament `add` amb validació del format YYYY-MM-DD. (RF-05, RF-06, RF-07)
 

@@ -4,6 +4,7 @@
 - Llenguatge: Python 3.11+
 - Interfície: Línia de comandes (CLI) amb mòdul `argparse` o `cmd`  
 - Manteniment de Dades: Fitxer JSON local (`data/tasks.json`)
+- Dates: usar només el mòdul `datetime` de la llibreria estàndard (format ISO YYYY-MM-DD).
 
 ## Comandes de Desenvolupament
 - Executar aplicació: `python3 src/tasks_app.py`
@@ -25,4 +26,6 @@
 ## Restriccions de Desenvolupament
 - No instal·lis llibreries externes no autoritzades.
 - No modifiquis fitxers de configuració fora de `src/` i `test/`
+- Els tests no poden dependre de la data real del sistema: la data actual s'ha de poder fixar als tests (p. ex. amb la variable d'entorn `TASKS_TODAY=YYYY-MM-DD`).
+- No modificar el comportament ni els missatges de la v1.0: els tests GS-01 a GS-03 han de continuar passant.
 

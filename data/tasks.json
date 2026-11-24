@@ -3,6 +3,27 @@
     "id": 1,
     "titol": "Pràctica 1",
     "assignatura": "RS",
-    "estat": "pendent"
+    "estat": "completada"
+  },
+  {
+    "id": 2,
+    "titol": "Informe final",
+    "assignatura": "RS",
+    "estat": "pendent",
+    "data_limit": "2026-11-20"
+  },
+  {
+    "id": 3,
+    "titol": "Examen parcial",
+    "assignatura": "SO",
+    "estat": "pendent",
+    "data_limit": "2026-11-28"
+  },
+  {
+    "id": 4,
+    "titol": "Projecte robot",
+    "assignatura": "SE",
+    "estat": "pendent",
+    "data_limit": "2026-12-20"
   }
 ]

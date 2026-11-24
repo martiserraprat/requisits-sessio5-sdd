@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "id": 1,
+    "titol": "Pràctica 1",
+    "assignatura": "RS",
+    "estat": "pendent"
+  }
+]

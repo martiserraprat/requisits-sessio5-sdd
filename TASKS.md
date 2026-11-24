@@ -52,7 +52,7 @@ Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tas
 ### Tasques d'Execució:
 - [x] Tasca 3.1: Implementar l'opció `--summary` del comandament `list`. (RF-19, RF-20, RF-21)
 
-- [ ] Tasca 3.2: Crear tests del resum segons GS-13 i GS-14, fixant la data actual.
+- [x] Tasca 3.2: Crear tests del resum segons GS-13 i GS-14, fixant la data actual.
 
 - [ ] Tasca 3.3: Implementar l'opció `--subject` del comandament `list`. (RF-22, RF-23, RF-27)
 

@@ -6,6 +6,42 @@ from pathlib import Path
 
 ARREL = Path(__file__).resolve().parents[1]
 GUIÓ = ARREL / "src" / "tasks_app.py"
+TASQUES_GS11 = [
+    {
+        "id": 1,
+        "titol": "Informe",
+        "assignatura": "RS",
+        "estat": "pendent",
+        "data_limit": "2026-11-25",
+    },
+    {
+        "id": 2,
+        "titol": "Examen",
+        "assignatura": "SO",
+        "estat": "pendent",
+        "data_limit": "2026-12-07",
+    },
+    {
+        "id": 3,
+        "titol": "Projecte",
+        "assignatura": "SE",
+        "estat": "pendent",
+        "data_limit": "2026-12-08",
+    },
+    {
+        "id": 4,
+        "titol": "Qüestionari",
+        "assignatura": "RS",
+        "estat": "completada",
+        "data_limit": "2026-11-20",
+    },
+    {
+        "id": 5,
+        "titol": "Lectura",
+        "assignatura": "RS",
+        "estat": "pendent",
+    },
+]
 
 
 def executa_cli(
@@ -317,4 +353,34 @@ def test_gs12_tasca_que_venc_el_mateix_dia(tmp_path: Path) -> None:
     assert sortida == (
         "[1] Entrega (RS) - estat: pendent"
         " - límit: 2026-12-01 [URGENT]"
+    )
+
+
+def test_gs13_resum_del_registre_amb_tasques(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path, "list", "--summary", data_actual="2026-12-01"
+    )
+
+    assert sortida == (
+        "Total de tasques: 5\n"
+        "Pendents: 4\n"
+        "Completades: 1\n"
+        "Caducades: 1\n"
+        "Urgents: 1"
+    )
+
+
+def test_gs14_resum_del_registre_buit(tmp_path: Path) -> None:
+    sortida = executa_cli(
+        tmp_path, "list", "--summary", data_actual="2026-12-01"
+    )
+
+    assert sortida == (
+        "Total de tasques: 0\n"
+        "Pendents: 0\n"
+        "Completades: 0\n"
+        "Caducades: 0\n"
+        "Urgents: 0"
     )

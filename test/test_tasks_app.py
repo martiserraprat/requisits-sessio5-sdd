@@ -384,3 +384,27 @@ def test_gs14_resum_del_registre_buit(tmp_path: Path) -> None:
         "Caducades: 0\n"
         "Urgents: 0"
     )
+
+
+def test_gs15_filtre_per_assignatura(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path, "list", "--subject", "rs", data_actual="2026-12-01"
+    )
+
+    assert sortida == (
+        "[1] Informe (RS) - estat: pendent - límit: 2026-11-25 [CADUCADA]\n"
+        "[4] Qüestionari (RS) - estat: completada - límit: 2026-11-20\n"
+        "[5] Lectura (RS) - estat: pendent"
+    )
+
+
+def test_gs16_filtre_per_assignatura_sense_resultats(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path, "list", "--subject", "FIS", data_actual="2026-12-01"
+    )
+
+    assert sortida == "No hi ha tasques per a l'assignatura FIS."

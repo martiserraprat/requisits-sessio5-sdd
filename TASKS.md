@@ -44,4 +44,4 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 
 - [x] Tasca 2.9: Crear tests del llistat segons GS-11 i GS-12, fixant la data actual.
 
-- [ ] Tasca 2.10: Verificar que tots els tests (GS-01 a GS-12) passen amb `python3 -m pytest test`.
+- [x] Tasca 2.10: Verificar que tots els tests (GS-01 a GS-12) passen amb `python3 -m pytest test`.

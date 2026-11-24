@@ -23,6 +23,16 @@ def llegeix_registres(directori: Path) -> list[dict]:
     return json.loads(fitxer.read_text(encoding="utf-8"))
 
 
+def escriu_registres(directori: Path, registres: list[dict]) -> None:
+    directori_dades = directori / "data"
+    directori_dades.mkdir(exist_ok=True)
+    fitxer = directori_dades / "tasks.json"
+    fitxer.write_text(
+        json.dumps(registres, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
 def test_gs01_creacio_correcta_duna_tasca(tmp_path: Path) -> None:
     sortida = executa_cli(
         tmp_path, "add", "--title", "Pràctica 1", "--subject", "RS"
@@ -116,3 +126,75 @@ def test_gs05_data_limit_en_format_incorrecte(tmp_path: Path) -> None:
 
     assert sortida == "Error: la data límit ha de tenir el format YYYY-MM-DD"
     assert llegeix_registres(tmp_path) == []
+
+
+def test_gs06_modificacio_correcta_del_titol(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Practica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            }
+        ],
+    )
+
+    sortida = executa_cli(
+        tmp_path, "edit", "--id", "1", "--title", "Pràctica 1"
+    )
+
+    assert sortida == "Tasca [ID: 1] modificada amb èxit"
+    assert llegeix_registres(tmp_path) == [
+        {
+            "id": 1,
+            "titol": "Pràctica 1",
+            "assignatura": "RS",
+            "estat": "pendent",
+        }
+    ]
+
+
+def test_gs07_modificacio_duna_tasca_inexistent(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Pràctica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            }
+        ],
+    )
+    fitxer = tmp_path / "data" / "tasks.json"
+    abans = fitxer.read_text(encoding="utf-8")
+
+    sortida = executa_cli(
+        tmp_path, "edit", "--id", "99", "--title", "Nou títol"
+    )
+
+    assert sortida == "Error: no existeix cap tasca amb ID 99"
+    assert fitxer.read_text(encoding="utf-8") == abans
+
+
+def test_gs08_modificacio_sense_cap_camp(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Pràctica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            }
+        ],
+    )
+    fitxer = tmp_path / "data" / "tasks.json"
+    abans = fitxer.read_text(encoding="utf-8")
+
+    sortida = executa_cli(tmp_path, "edit", "--id", "1")
+
+    assert sortida == "Error: cal indicar almenys un camp a modificar"
+    assert fitxer.read_text(encoding="utf-8") == abans

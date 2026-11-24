@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -7,13 +8,21 @@ ARREL = Path(__file__).resolve().parents[1]
 GUIÓ = ARREL / "src" / "tasks_app.py"
 
 
-def executa_cli(directori: Path, *arguments: str) -> str:
+def executa_cli(
+    directori: Path,
+    *arguments: str,
+    data_actual: str | None = None,
+) -> str:
+    entorn = os.environ.copy()
+    if data_actual is not None:
+        entorn["TASKS_TODAY"] = data_actual
     resultat = subprocess.run(
         [sys.executable, str(GUIÓ), *arguments],
         cwd=directori,
         capture_output=True,
         text=True,
         check=True,
+        env=entorn,
     )
     return resultat.stdout.strip()
 
@@ -235,3 +244,77 @@ def test_gs10_completar_tasca_inexistent(tmp_path: Path) -> None:
 
     assert sortida == "Error: no existeix cap tasca amb ID 5"
     assert fitxer.read_text(encoding="utf-8") == abans
+
+
+def test_gs11_llistat_amb_avisos(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Informe",
+                "assignatura": "RS",
+                "estat": "pendent",
+                "data_limit": "2026-11-25",
+            },
+            {
+                "id": 2,
+                "titol": "Examen",
+                "assignatura": "SO",
+                "estat": "pendent",
+                "data_limit": "2026-12-07",
+            },
+            {
+                "id": 3,
+                "titol": "Projecte",
+                "assignatura": "SE",
+                "estat": "pendent",
+                "data_limit": "2026-12-08",
+            },
+            {
+                "id": 4,
+                "titol": "Qüestionari",
+                "assignatura": "RS",
+                "estat": "completada",
+                "data_limit": "2026-11-20",
+            },
+            {
+                "id": 5,
+                "titol": "Lectura",
+                "assignatura": "RS",
+                "estat": "pendent",
+            },
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "list", data_actual="2026-12-01")
+
+    assert sortida == (
+        "[1] Informe (RS) - estat: pendent - límit: 2026-11-25 [CADUCADA]\n"
+        "[2] Examen (SO) - estat: pendent - límit: 2026-12-07 [URGENT]\n"
+        "[3] Projecte (SE) - estat: pendent - límit: 2026-12-08\n"
+        "[4] Qüestionari (RS) - estat: completada - límit: 2026-11-20\n"
+        "[5] Lectura (RS) - estat: pendent"
+    )
+
+
+def test_gs12_tasca_que_venc_el_mateix_dia(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Entrega",
+                "assignatura": "RS",
+                "estat": "pendent",
+                "data_limit": "2026-12-01",
+            }
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "list", data_actual="2026-12-01")
+
+    assert sortida == (
+        "[1] Entrega (RS) - estat: pendent"
+        " - límit: 2026-12-01 [URGENT]"
+    )

@@ -1,5 +1,6 @@
 import argparse
 import json
+from datetime import datetime
 from pathlib import Path
 
 try:
@@ -8,6 +9,7 @@ except ModuleNotFoundError:
     from src.models import Task
 
 FITXER_TASQUES = Path("data") / "tasks.json"
+MISSATGE_DATA_INVALIDA = "Error: la data límit ha de tenir el format YYYY-MM-DD"
 
 
 def assegura_fitxer(ruta: str | Path = FITXER_TASQUES) -> None:
@@ -15,6 +17,14 @@ def assegura_fitxer(ruta: str | Path = FITXER_TASQUES) -> None:
     cami.parent.mkdir(parents=True, exist_ok=True)
     if not cami.exists():
         cami.write_text("[]", encoding="utf-8")
+
+
+def es_data_valida(valor: str) -> bool:
+    try:
+        data = datetime.strptime(valor, "%Y-%m-%d").date()
+    except ValueError:
+        return False
+    return data.isoformat() == valor
 
 
 def llegeix_tasques(ruta: str | Path = FITXER_TASQUES) -> list[Task]:
@@ -45,9 +55,15 @@ def afegeix_tasca(
     titol: str,
     assignatura: str,
     ruta: str | Path = FITXER_TASQUES,
+    data_limit: str | None = None,
 ) -> Task:
     tasques = llegeix_tasques(ruta)
-    tasca = Task(seguent_identificador(tasques), titol, assignatura)
+    tasca = Task(
+        seguent_identificador(tasques),
+        titol,
+        assignatura,
+        data_limit=data_limit,
+    )
     tasques.append(tasca)
     desa_tasques(tasques, ruta)
     return tasca
@@ -79,13 +95,25 @@ def main(argv: list[str] | None = None) -> int:
         dest="assignatura",
         help="Assignatura de la tasca.",
     )
+    afegir.add_argument(
+        "--due",
+        help="Data límit amb format YYYY-MM-DD.",
+    )
 
     comandes.add_parser("list", help="Mostra totes les tasques registrades.")
 
     arguments = analitzador.parse_args(argv)
 
     if arguments.comanda == "add":
-        tasca = afegeix_tasca(arguments.titol, arguments.assignatura)
+        assegura_fitxer()
+        if arguments.due is not None and not es_data_valida(arguments.due):
+            print(MISSATGE_DATA_INVALIDA)
+            return 0
+        tasca = afegeix_tasca(
+            arguments.titol,
+            arguments.assignatura,
+            data_limit=arguments.due,
+        )
         print(f"Tasca [ID: {tasca.id}] creada amb èxit")
     else:
         for linia in llista_de_tasques():

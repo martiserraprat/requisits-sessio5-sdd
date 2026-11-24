@@ -408,3 +408,41 @@ def test_gs16_filtre_per_assignatura_sense_resultats(tmp_path: Path) -> None:
     )
 
     assert sortida == "No hi ha tasques per a l'assignatura FIS."
+
+
+def test_gs17_filtre_per_paraula_clau(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path, "list", "--keyword", "exam", data_actual="2026-12-01"
+    )
+
+    assert sortida == (
+        "[2] Examen (SO) - estat: pendent - límit: 2026-12-07 [URGENT]"
+    )
+
+
+def test_gs18_filtre_per_paraula_sense_resultats(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path, "list", "--keyword", "treball", data_actual="2026-12-01"
+    )
+
+    assert sortida == "No hi ha tasques que continguin 'treball'."
+
+
+def test_gs19_combinacio_de_filtres(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, TASQUES_GS11)
+
+    sortida = executa_cli(
+        tmp_path,
+        "list",
+        "--subject",
+        "RS",
+        "--keyword",
+        "lect",
+        data_actual="2026-12-01",
+    )
+
+    assert sortida == "[5] Lectura (RS) - estat: pendent"

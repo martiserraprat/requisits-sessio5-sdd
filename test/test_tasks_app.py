@@ -198,3 +198,40 @@ def test_gs08_modificacio_sense_cap_camp(tmp_path: Path) -> None:
 
     assert sortida == "Error: cal indicar almenys un camp a modificar"
     assert fitxer.read_text(encoding="utf-8") == abans
+
+
+def test_gs09_marcar_tasca_completada(tmp_path: Path) -> None:
+    escriu_registres(
+        tmp_path,
+        [
+            {
+                "id": 1,
+                "titol": "Pràctica 1",
+                "assignatura": "RS",
+                "estat": "pendent",
+            }
+        ],
+    )
+
+    sortida = executa_cli(tmp_path, "complete", "--id", "1")
+
+    assert sortida == "Tasca [ID: 1] marcada com a completada"
+    assert llegeix_registres(tmp_path) == [
+        {
+            "id": 1,
+            "titol": "Pràctica 1",
+            "assignatura": "RS",
+            "estat": "completada",
+        }
+    ]
+
+
+def test_gs10_completar_tasca_inexistent(tmp_path: Path) -> None:
+    escriu_registres(tmp_path, [])
+    fitxer = tmp_path / "data" / "tasks.json"
+    abans = fitxer.read_text(encoding="utf-8")
+
+    sortida = executa_cli(tmp_path, "complete", "--id", "5")
+
+    assert sortida == "Error: no existeix cap tasca amb ID 5"
+    assert fitxer.read_text(encoding="utf-8") == abans

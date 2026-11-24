@@ -10,6 +10,9 @@ except ModuleNotFoundError:
 
 FITXER_TASQUES = Path("data") / "tasks.json"
 MISSATGE_DATA_INVALIDA = "Error: la data límit ha de tenir el format YYYY-MM-DD"
+ESTATS_VALID = ("pendent", "completada")
+MISSATGE_CAMP_BUIT = "Error: cal indicar almenys un camp a modificar"
+MISSATGE_ESTAT_INVALID = "Error: l'estat ha de ser 'pendent' o 'completada'"
 
 
 def assegura_fitxer(ruta: str | Path = FITXER_TASQUES) -> None:
@@ -69,6 +72,31 @@ def afegeix_tasca(
     return tasca
 
 
+def edita_tasca(
+    identificador: int,
+    titol: str | None = None,
+    assignatura: str | None = None,
+    data_limit: str | None = None,
+    estat: str | None = None,
+    ruta: str | Path = FITXER_TASQUES,
+) -> Task | None:
+    tasques = llegeix_tasques(ruta)
+    for tasca in tasques:
+        if tasca.id != identificador:
+            continue
+        if titol is not None:
+            tasca.titol = titol
+        if assignatura is not None:
+            tasca.assignatura = assignatura
+        if data_limit is not None:
+            tasca.data_limit = data_limit
+        if estat is not None:
+            tasca.estat = estat
+        desa_tasques(tasques, ruta)
+        return tasca
+    return None
+
+
 def llista_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
     tasques = llegeix_tasques(ruta)
     if not tasques:
@@ -100,6 +128,27 @@ def main(argv: list[str] | None = None) -> int:
         help="Data límit amb format YYYY-MM-DD.",
     )
 
+    editar = comandes.add_parser("edit", help="Modifica una tasca existent.")
+    editar.add_argument(
+        "--id",
+        required=True,
+        type=int,
+        dest="identificador",
+        help="ID de la tasca a modificar.",
+    )
+    editar.add_argument("--title", dest="titol", help="Nou títol de la tasca.")
+    editar.add_argument(
+        "--subject", dest="assignatura", help="Nova assignatura de la tasca."
+    )
+    editar.add_argument(
+        "--due", help="Nova data límit amb format YYYY-MM-DD."
+    )
+    editar.add_argument(
+        "--status",
+        dest="estat",
+        help="Nou estat: pendent o completada.",
+    )
+
     comandes.add_parser("list", help="Mostra totes les tasques registrades.")
 
     arguments = analitzador.parse_args(argv)
@@ -115,6 +164,33 @@ def main(argv: list[str] | None = None) -> int:
             data_limit=arguments.due,
         )
         print(f"Tasca [ID: {tasca.id}] creada amb èxit")
+    elif arguments.comanda == "edit":
+        camps = (
+            arguments.titol,
+            arguments.assignatura,
+            arguments.due,
+            arguments.estat,
+        )
+        if all(camp is None for camp in camps):
+            print(MISSATGE_CAMP_BUIT)
+            return 0
+        if arguments.estat is not None and arguments.estat not in ESTATS_VALID:
+            print(MISSATGE_ESTAT_INVALID)
+            return 0
+        if arguments.due is not None and not es_data_valida(arguments.due):
+            print(MISSATGE_DATA_INVALIDA)
+            return 0
+        tasca = edita_tasca(
+            arguments.identificador,
+            titol=arguments.titol,
+            assignatura=arguments.assignatura,
+            data_limit=arguments.due,
+            estat=arguments.estat,
+        )
+        if tasca is None:
+            print(f"Error: no existeix cap tasca amb ID {arguments.identificador}")
+            return 0
+        print(f"Tasca [ID: {tasca.id}] modificada amb èxit")
     else:
         for linia in llista_de_tasques():
             print(linia)

@@ -45,3 +45,21 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 - [x] Tasca 2.9: Crear tests del llistat segons GS-11 i GS-12, fixant la data actual.
 
 - [x] Tasca 2.10: Verificar que tots els tests (GS-01 a GS-12) passen amb `python3 -m pytest test`.
+
+## Increment 3: Resum i filtres del llistat (v3.0)
+Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tasques gran.
+
+### Tasques d'Execució:
+- [ ] Tasca 3.1: Implementar l'opció `--summary` del comandament `list`. (RF-19, RF-20, RF-21)
+
+- [ ] Tasca 3.2: Crear tests del resum segons GS-13 i GS-14, fixant la data actual.
+
+- [ ] Tasca 3.3: Implementar l'opció `--subject` del comandament `list`. (RF-22, RF-23, RF-27)
+
+- [ ] Tasca 3.4: Crear tests del filtre per assignatura segons GS-15 i GS-16.
+
+- [ ] Tasca 3.5: Implementar l'opció `--keyword` del comandament `list` i la combinació amb `--subject`. (RF-24, RF-25, RF-26, RF-27)
+
+- [ ] Tasca 3.6: Crear tests del filtre per paraula clau segons GS-17, GS-18 i GS-19.
+
+- [ ] Tasca 3.7: Verificar que tots els tests (GS-01 a GS-19) passen amb `python3 -m pytest test`.

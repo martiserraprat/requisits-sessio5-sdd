@@ -150,9 +150,96 @@ Funcionalitats incorporades: data límit, modificació de tasques, completar tas
     "[3] Projecte (SE) - estat: pendent - límit: 2026-12-08"
     "[4] Qüestionari (RS) - estat: completada - límit: 2026-11-20"
     "[5] Lectura (RS) - estat: pendent"
-    
+
 - GS-12: Tasca que venç el mateix dia
   Atès que la data actual és 2026-12-01
   I el fitxer `data/tasks.json` conté una tasca pendent amb ID 1, títol 'Entrega', assignatura 'RS' i data límit 2026-12-01
   Quan l'estudiant executa `python src/tasks_app.py list`
   Aleshores el sistema mostra `[1] Entrega (RS) - estat: pendent - límit: 2026-12-01 [URGENT]`.
+
+---
+
+## 7. Iteració 3 (v3.0)
+
+Funcionalitats incorporades: resum del registre de tasques, filtre per assignatura i filtre per paraula clau del títol.
+
+### 7.1 User Stories
+- US-07: Com a estudiant, vull veure un resum amb la quantitat de tasques per estat per tal de tenir una visió global de la meva càrrega de feina.
+- US-08: Com a estudiant, vull veure només les tasques d'una assignatura per tal de centrar-me en una matèria concreta.
+- US-09: Com a estudiant, vull cercar tasques per una paraula del títol per tal de trobar ràpidament una tasca concreta.
+
+### 7.2 Requisits
+
+**Resum**
+- RF-19: El sistema tasks_app ha de proveir a l'estudiant la capacitat de visualitzar un resum del registre de tasques mitjançant el comandament list --summary.
+
+- RF-20: El resum ha de mostrar, en línies separades i en aquest ordre, el total de tasques, el nombre de tasques pendents, completades, caducades i urgents, amb el format `<Concepte>: <nombre>`.
+
+- RF-21: El sistema tasks_app ha de comptabilitzar com a caducades i urgents només les tasques amb estat 'pendent', seguint els criteris de RF-16 i RF-17.
+
+**Filtre per assignatura**
+- RF-22: El sistema tasks_app ha de proveir a l'estudiant la capacitat de visualitzar només les tasques d'una assignatura mitjançant el comandament list --subject <assignatura>, sense distingir majúscules de minúscules.
+
+- RF-23: Si no hi ha cap tasca de l'assignatura indicada, el sistema tasks_app ha de mostrar el missatge `No hi ha tasques per a l'assignatura <assignatura>.`
+
+**Filtre per paraula clau**
+- RF-24: El sistema tasks_app ha de proveir a l'estudiant la capacitat de visualitzar només les tasques el títol de les quals conté una paraula clau mitjançant el comandament list --keyword <paraula>, sense distingir majúscules de minúscules.
+
+- RF-25: Si cap títol no conté la paraula clau indicada, el sistema tasks_app ha de mostrar el missatge `No hi ha tasques que continguin '<paraula>'.`
+
+**Combinació d'opcions**
+- RF-26: Si l'estudiant combina les opcions --subject i --keyword, el sistema tasks_app ha de mostrar només les tasques que compleixin les dues condicions.
+
+- RF-27: Les tasques filtrades s'han de mostrar amb el mateix format i les mateixes etiquetes que el comandament list (RF-15 a RF-18).
+
+### 7.3 Criteris d'acceptació (Gherkin scenarios)
+
+Per als escenaris GS-13, GS-15, GS-17 i GS-19:
+  Atès que la data actual és 2026-12-01
+  I el fitxer `data/tasks.json` conté les tasques de l'escenari GS-11.
+
+- GS-13: Resum del registre amb tasques
+  Quan l'estudiant executa `python src/tasks_app.py list --summary`
+  Aleshores el sistema mostra per pantalla:
+    "Total de tasques: 5"
+    "Pendents: 4"
+    "Completades: 1"
+    "Caducades: 1"
+    "Urgents: 1"
+
+- GS-14: Resum del registre buit
+  Atès que la base de dades JSON no conté encara tasques
+  Quan l'estudiant executa `python src/tasks_app.py list --summary`
+  Aleshores el sistema mostra per pantalla:
+    "Total de tasques: 0"
+    "Pendents: 0"
+    "Completades: 0"
+    "Caducades: 0"
+    "Urgents: 0"
+
+- GS-15: Filtre per assignatura
+  Quan l'estudiant executa `python src/tasks_app.py list --subject rs`
+  Aleshores el sistema mostra per pantalla:
+    "[1] Informe (RS) - estat: pendent - límit: 2026-11-25 [CADUCADA]"
+    "[4] Qüestionari (RS) - estat: completada - límit: 2026-11-20"
+    "[5] Lectura (RS) - estat: pendent"
+
+- GS-16: Filtre per assignatura sense resultats
+  Atès que el fitxer `data/tasks.json` no conté cap tasca de l'assignatura 'FIS'
+  Quan l'estudiant executa `python src/tasks_app.py list --subject FIS`
+  Aleshores el sistema mostra `No hi ha tasques per a l'assignatura FIS.`
+
+- GS-17: Filtre per paraula clau
+  Quan l'estudiant executa `python src/tasks_app.py list --keyword exam`
+  Aleshores el sistema mostra per pantalla:
+    "[2] Examen (SO) - estat: pendent - límit: 2026-12-07 [URGENT]"
+
+- GS-18: Filtre per paraula clau sense resultats
+  Atès que cap títol de `data/tasks.json` no conté la paraula 'treball'
+  Quan l'estudiant executa `python src/tasks_app.py list --keyword treball`
+  Aleshores el sistema mostra `No hi ha tasques que continguin 'treball'.`
+
+- GS-19: Combinació de filtres
+  Quan l'estudiant executa `python src/tasks_app.py list --subject RS --keyword lect`
+  Aleshores el sistema mostra per pantalla:
+    "[5] Lectura (RS) - estat: pendent"

@@ -150,16 +150,29 @@ def filtra_per_assignatura(
     ]
 
 
+def filtra_per_paraula(tasques: list[Task], paraula: str) -> list[Task]:
+    return [
+        tasca
+        for tasca in tasques
+        if paraula.casefold() in tasca.titol.casefold()
+    ]
+
+
 def llista_de_tasques(
     ruta: str | Path = FITXER_TASQUES,
     assignatura: str | None = None,
+    paraula: str | None = None,
 ) -> list[str]:
     tasques = llegeix_tasques(ruta)
     if assignatura is not None:
         tasques = filtra_per_assignatura(tasques, assignatura)
-    if not tasques:
-        if assignatura is not None:
+        if not tasques:
             return [f"No hi ha tasques per a l'assignatura {assignatura}."]
+    if paraula is not None:
+        tasques = filtra_per_paraula(tasques, paraula)
+        if not tasques:
+            return [f"No hi ha tasques que continguin '{paraula}'."]
+    if not tasques:
         return ["Registre de tasques buit."]
     actual = data_actual()
     return [linia_de_tasca(tasca, actual) for tasca in tasques]
@@ -244,6 +257,11 @@ def main(argv: list[str] | None = None) -> int:
         dest="assignatura",
         help="Mostra només les tasques d'una assignatura.",
     )
+    llistar.add_argument(
+        "--keyword",
+        dest="paraula",
+        help="Filtra per paraula del títol.",
+    )
 
     arguments = analitzador.parse_args(argv)
 
@@ -295,7 +313,10 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.summary:
             linies = resum_de_tasques()
         else:
-            linies = llista_de_tasques(assignatura=arguments.assignatura)
+            linies = llista_de_tasques(
+                assignatura=arguments.assignatura,
+                paraula=arguments.paraula,
+            )
         for linia in linies:
             print(linia)
 

@@ -58,7 +58,7 @@ Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tas
 
 - [x] Tasca 3.4: Crear tests del filtre per assignatura segons GS-15 i GS-16.
 
-- [ ] Tasca 3.5: Implementar l'opció `--keyword` del comandament `list` i la combinació amb `--subject`. (RF-24, RF-25, RF-26, RF-27)
+- [x] Tasca 3.5: Implementar l'opció `--keyword` del comandament `list` i la combinació amb `--subject`. (RF-24, RF-25, RF-26, RF-27)
 
 - [ ] Tasca 3.6: Crear tests del filtre per paraula clau segons GS-17, GS-18 i GS-19.
 

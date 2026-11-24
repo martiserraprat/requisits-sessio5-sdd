@@ -1,6 +1,7 @@
 import argparse
 import json
-from datetime import datetime
+import os
+from datetime import date, datetime
 from pathlib import Path
 
 try:
@@ -104,14 +105,47 @@ def completa_tasca(
     return edita_tasca(identificador, estat="completada", ruta=ruta)
 
 
+def data_actual() -> date:
+    valor = os.environ.get("TASKS_TODAY")
+    if valor is None:
+        return date.today()
+    try:
+        return date.fromisoformat(valor)
+    except ValueError:
+        return date.today()
+
+
+def etiqueta_per_tasca(tasca: Task, actual: date) -> str:
+    if tasca.estat != "pendent" or tasca.data_limit is None:
+        return ""
+    try:
+        limit = date.fromisoformat(tasca.data_limit)
+    except ValueError:
+        return ""
+    dies = (limit - actual).days
+    if dies < 0:
+        return " [CADUCADA]"
+    if dies <= 6:
+        return " [URGENT]"
+    return ""
+
+
 def llista_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
     tasques = llegeix_tasques(ruta)
     if not tasques:
         return ["Registre de tasques buit."]
-    return [
-        f"[{tasca.id}] {tasca.titol} ({tasca.assignatura}) - estat: {tasca.estat}"
-        for tasca in tasques
-    ]
+    actual = data_actual()
+    linies = []
+    for tasca in tasques:
+        linia = (
+            f"[{tasca.id}] {tasca.titol} ({tasca.assignatura})"
+            f" - estat: {tasca.estat}"
+        )
+        if tasca.data_limit is not None:
+            linia += f" - límit: {tasca.data_limit}"
+        linia += etiqueta_per_tasca(tasca, actual)
+        linies.append(linia)
+    return linies
 
 
 def main(argv: list[str] | None = None) -> int:

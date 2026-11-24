@@ -40,7 +40,7 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 
 - [x] Tasca 2.7: Crear tests del comandament `complete` segons GS-09 i GS-10.
 
-- [ ] Tasca 2.8: Ampliar el comandament `list` per mostrar la data límit i les etiquetes [CADUCADA] i [URGENT]. (RF-15, RF-16, RF-17, RF-18)
+- [x] Tasca 2.8: Ampliar el comandament `list` per mostrar la data límit i les etiquetes [CADUCADA] i [URGENT]. (RF-15, RF-16, RF-17, RF-18)
 
 - [ ] Tasca 2.9: Crear tests del llistat segons GS-11 i GS-12, fixant la data actual.
 

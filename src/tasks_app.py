@@ -13,6 +13,7 @@ MISSATGE_DATA_INVALIDA = "Error: la data límit ha de tenir el format YYYY-MM-DD
 ESTATS_VALID = ("pendent", "completada")
 MISSATGE_CAMP_BUIT = "Error: cal indicar almenys un camp a modificar"
 MISSATGE_ESTAT_INVALID = "Error: l'estat ha de ser 'pendent' o 'completada'"
+MISSATGE_ID_NO_EXISTEIX = "Error: no existeix cap tasca amb ID {}"
 
 
 def assegura_fitxer(ruta: str | Path = FITXER_TASQUES) -> None:
@@ -97,6 +98,12 @@ def edita_tasca(
     return None
 
 
+def completa_tasca(
+    identificador: int, ruta: str | Path = FITXER_TASQUES
+) -> Task | None:
+    return edita_tasca(identificador, estat="completada", ruta=ruta)
+
+
 def llista_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
     tasques = llegeix_tasques(ruta)
     if not tasques:
@@ -149,6 +156,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Nou estat: pendent o completada.",
     )
 
+    completar = comandes.add_parser(
+        "complete", help="Marca una tasca com a completada."
+    )
+    completar.add_argument(
+        "--id",
+        required=True,
+        type=int,
+        dest="identificador",
+        help="ID de la tasca a completar.",
+    )
+
     comandes.add_parser("list", help="Mostra totes les tasques registrades.")
 
     arguments = analitzador.parse_args(argv)
@@ -188,9 +206,15 @@ def main(argv: list[str] | None = None) -> int:
             estat=arguments.estat,
         )
         if tasca is None:
-            print(f"Error: no existeix cap tasca amb ID {arguments.identificador}")
+            print(MISSATGE_ID_NO_EXISTEIX.format(arguments.identificador))
             return 0
         print(f"Tasca [ID: {tasca.id}] modificada amb èxit")
+    elif arguments.comanda == "complete":
+        tasca = completa_tasca(arguments.identificador)
+        if tasca is None:
+            print(MISSATGE_ID_NO_EXISTEIX.format(arguments.identificador))
+            return 0
+        print(f"Tasca [ID: {tasca.id}] marcada com a completada")
     else:
         for linia in llista_de_tasques():
             print(linia)

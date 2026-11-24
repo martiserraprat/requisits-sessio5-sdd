@@ -36,7 +36,7 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 
 - [x] Tasca 2.5: Crear tests del comandament `edit` segons GS-06, GS-07 i GS-08.
 
-- [ ] Tasca 2.6: Implementar el comandament `complete --id`. (RF-13, RF-14)
+- [x] Tasca 2.6: Implementar el comandament `complete --id`. (RF-13, RF-14)
 
 - [ ] Tasca 2.7: Crear tests del comandament `complete` segons GS-09 i GS-10.
 

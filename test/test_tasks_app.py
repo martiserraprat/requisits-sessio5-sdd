@@ -76,3 +76,43 @@ def test_gs03_llistat_de_tasques_amb_registres(tmp_path: Path) -> None:
         "[1] Pràctica 1 (RS) - estat: pendent\n"
         "[2] Examen parcial (SO) - estat: pendent"
     )
+
+
+def test_gs04_creacio_amb_data_limit(tmp_path: Path) -> None:
+    sortida = executa_cli(
+        tmp_path,
+        "add",
+        "--title",
+        "Examen",
+        "--subject",
+        "SO",
+        "--due",
+        "2026-12-15",
+    )
+
+    assert sortida == "Tasca [ID: 1] creada amb èxit"
+    assert llegeix_registres(tmp_path) == [
+        {
+            "id": 1,
+            "titol": "Examen",
+            "assignatura": "SO",
+            "estat": "pendent",
+            "data_limit": "2026-12-15",
+        }
+    ]
+
+
+def test_gs05_data_limit_en_format_incorrecte(tmp_path: Path) -> None:
+    sortida = executa_cli(
+        tmp_path,
+        "add",
+        "--title",
+        "Examen",
+        "--subject",
+        "SO",
+        "--due",
+        "15/12/2026",
+    )
+
+    assert sortida == "Error: la data límit ha de tenir el format YYYY-MM-DD"
+    assert llegeix_registres(tmp_path) == []

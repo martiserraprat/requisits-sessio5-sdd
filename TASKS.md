@@ -30,7 +30,7 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 
 - [x] Tasca 2.2: Afegir l'opció `--due` al comandament `add` amb validació del format YYYY-MM-DD. (RF-05, RF-06, RF-07)
 
-- [ ] Tasca 2.3: Crear tests de `add --due` a `test/test_tasks_app.py` segons GS-04 i GS-05.
+- [x] Tasca 2.3: Crear tests de `add --due` a `test/test_tasks_app.py` segons GS-04 i GS-05.
 
 - [ ] Tasca 2.4: Implementar el comandament `edit --id` amb les opcions `--title`, `--subject`, `--due` i `--status`. (RF-08, RF-09, RF-10, RF-11, RF-12)
 

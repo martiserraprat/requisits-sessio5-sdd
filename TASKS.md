@@ -62,4 +62,4 @@ Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tas
 
 - [x] Tasca 3.6: Crear tests del filtre per paraula clau segons GS-17, GS-18 i GS-19.
 
-- [ ] Tasca 3.7: Verificar que tots els tests (GS-01 a GS-19) passen amb `python3 -m pytest test`.
+- [x] Tasca 3.7: Verificar que tots els tests (GS-01 a GS-19) passen amb `python3 -m pytest test`.

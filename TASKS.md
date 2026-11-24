@@ -50,7 +50,7 @@ Objectiu: Ampliar Tasks_app amb data límit, edició i compleció de tasques, i 
 Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tasques gran.
 
 ### Tasques d'Execució:
-- [ ] Tasca 3.1: Implementar l'opció `--summary` del comandament `list`. (RF-19, RF-20, RF-21)
+- [x] Tasca 3.1: Implementar l'opció `--summary` del comandament `list`. (RF-19, RF-20, RF-21)
 
 - [ ] Tasca 3.2: Crear tests del resum segons GS-13 i GS-14, fixant la data actual.
 

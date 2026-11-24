@@ -148,6 +148,19 @@ def llista_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
     return linies
 
 
+def resum_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
+    tasques = llegeix_tasques(ruta)
+    actual = data_actual()
+    etiquetes = [etiqueta_per_tasca(tasca, actual) for tasca in tasques]
+    return [
+        f"Total de tasques: {len(tasques)}",
+        f"Pendents: {sum(t.estat == 'pendent' for t in tasques)}",
+        f"Completades: {sum(t.estat == 'completada' for t in tasques)}",
+        f"Caducades: {etiquetes.count(' [CADUCADA]')}",
+        f"Urgents: {etiquetes.count(' [URGENT]')}",
+    ]
+
+
 def main(argv: list[str] | None = None) -> int:
     analitzador = argparse.ArgumentParser(
         description="Eina CLI per gestionar tasques acadèmiques."
@@ -201,7 +214,14 @@ def main(argv: list[str] | None = None) -> int:
         help="ID de la tasca a completar.",
     )
 
-    comandes.add_parser("list", help="Mostra totes les tasques registrades.")
+    llistar = comandes.add_parser(
+        "list", help="Mostra totes les tasques registrades."
+    )
+    llistar.add_argument(
+        "--summary",
+        action="store_true",
+        help="Mostra un resum del registre.",
+    )
 
     arguments = analitzador.parse_args(argv)
 
@@ -250,7 +270,11 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         print(f"Tasca [ID: {tasca.id}] marcada com a completada")
     else:
-        for linia in llista_de_tasques():
+        if arguments.summary:
+            linies = resum_de_tasques()
+        else:
+            linies = llista_de_tasques()
+        for linia in linies:
             print(linia)
 
     return 0

@@ -130,22 +130,39 @@ def etiqueta_per_tasca(tasca: Task, actual: date) -> str:
     return ""
 
 
-def llista_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
+def linia_de_tasca(tasca: Task, actual: date) -> str:
+    linia = (
+        f"[{tasca.id}] {tasca.titol} ({tasca.assignatura})"
+        f" - estat: {tasca.estat}"
+    )
+    if tasca.data_limit is not None:
+        linia += f" - límit: {tasca.data_limit}"
+    return linia + etiqueta_per_tasca(tasca, actual)
+
+
+def filtra_per_assignatura(
+    tasques: list[Task], assignatura: str
+) -> list[Task]:
+    return [
+        tasca
+        for tasca in tasques
+        if tasca.assignatura.casefold() == assignatura.casefold()
+    ]
+
+
+def llista_de_tasques(
+    ruta: str | Path = FITXER_TASQUES,
+    assignatura: str | None = None,
+) -> list[str]:
     tasques = llegeix_tasques(ruta)
+    if assignatura is not None:
+        tasques = filtra_per_assignatura(tasques, assignatura)
     if not tasques:
+        if assignatura is not None:
+            return [f"No hi ha tasques per a l'assignatura {assignatura}."]
         return ["Registre de tasques buit."]
     actual = data_actual()
-    linies = []
-    for tasca in tasques:
-        linia = (
-            f"[{tasca.id}] {tasca.titol} ({tasca.assignatura})"
-            f" - estat: {tasca.estat}"
-        )
-        if tasca.data_limit is not None:
-            linia += f" - límit: {tasca.data_limit}"
-        linia += etiqueta_per_tasca(tasca, actual)
-        linies.append(linia)
-    return linies
+    return [linia_de_tasca(tasca, actual) for tasca in tasques]
 
 
 def resum_de_tasques(ruta: str | Path = FITXER_TASQUES) -> list[str]:
@@ -222,6 +239,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Mostra un resum del registre.",
     )
+    llistar.add_argument(
+        "--subject",
+        dest="assignatura",
+        help="Mostra només les tasques d'una assignatura.",
+    )
 
     arguments = analitzador.parse_args(argv)
 
@@ -273,7 +295,7 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.summary:
             linies = resum_de_tasques()
         else:
-            linies = llista_de_tasques()
+            linies = llista_de_tasques(assignatura=arguments.assignatura)
         for linia in linies:
             print(linia)
 

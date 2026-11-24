@@ -54,7 +54,7 @@ Objectiu: Oferir modes de llistat que facilitin la consulta d'un registre de tas
 
 - [x] Tasca 3.2: Crear tests del resum segons GS-13 i GS-14, fixant la data actual.
 
-- [ ] Tasca 3.3: Implementar l'opció `--subject` del comandament `list`. (RF-22, RF-23, RF-27)
+- [x] Tasca 3.3: Implementar l'opció `--subject` del comandament `list`. (RF-22, RF-23, RF-27)
 
 - [ ] Tasca 3.4: Crear tests del filtre per assignatura segons GS-15 i GS-16.
 
